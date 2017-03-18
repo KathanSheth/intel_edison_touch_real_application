@@ -1,5 +1,5 @@
 var mraa = require('mraa'); //require mraa
-//const mqtt = require('mqtt');
+const mqtt = require('mqtt');
 
 console.log('MRAA Version: ' + mraa.getVersion()); //write the mraa version to resin.io dashboard logs
 //var analogPin0 = new mraa.Aio(2); //setup access analog inpuput pin 0
