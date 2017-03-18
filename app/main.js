@@ -6,17 +6,16 @@ console.log('MRAA Version: ' + mraa.getVersion()); //write the mraa version to r
  //read the pin value as a float
 
 //Touch Sensor connected to D2 connector
- var digital_pin_D2 = new mraa.Gpio(2);
- digital_pin_D2.dir(mraa.DIR_IN);
+ var button = new mraa.Gpio(2);
+ button.dir(mraa.DIR_IN);
 
  //Buzzer connected to D6 connector
- var digital_pin_D6 = new mraa.Gpio(6);
- digital_pin_D6.dir(mraa.DIR_OUT);
+ var led = new mraa.Gpio(6);
+ led.dir(mraa.DIR_OUT);
+led.write(0)
 
 
-digital_pin_D6.write(0);
-
-var touch_sensor_value = 0, last_t_sensor_value;
+var buttonstate = 0, last_t_sensor_value;
 
 
 
@@ -26,18 +25,18 @@ function periodicActivity()
 {
 
 
-	touch_sensor_value = digital_pin_D2.read();
+	buttonstate = button.read();
 
-	  if (touch_sensor_value === 1 && last_t_sensor_value === 0) {
-            console.log("Buzz ON!!!");
-            digital_pin_D6.write(touch_sensor_value);
-        } else if (touch_sensor_value === 0 && last_t_sensor_value === 1) {
-            console.log("Buzz OFF!!!");
+	  if (buttonstate === 1 && last_t_sensor_value === 0) {
+            console.log("LED ON!!!");
+            led.write(buttonstate);
+        } else if (buttonstate === 0 && last_t_sensor_value === 1) {
+            console.log("LED OFF!!!");
             //socket.emit('message', "absent");
-            digital_pin_D6.write(touch_sensor_value);
+            led.write(buttonstate);
         }
 
-        last_t_sensor_value = touch_sensor_value;
+        last_t_sensor_value = buttonstate;
 
 
 	//var analogValueFloat = analogPin0.read();
@@ -47,7 +46,7 @@ function periodicActivity()
 const client =  mqtt.connect('mqtt://iot.eclipse.org', 1883, 60);
 
 
-var msg=""+digital_pin_D2;
+var msg=""+button;
 
 client.on('connect', function () {
 
@@ -55,6 +54,7 @@ client.on('connect', function () {
 	console.log("Connection Successful "+ topic1);
 
 	client.publish(topic1,msg);
+	console.log("Value of digital pin is: "+msg)
 });
 
 
